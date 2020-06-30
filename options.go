@@ -5,15 +5,16 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+//Option return setted options.
 type Option func(*Options)
 
-// 默认值
+// Default value.
 const (
-	// DefaultLevel 默认日志级别
+	// Default Log Level
 	DefaultLevel = zapcore.DebugLevel
-	// DefaultFileName 默认日志输出路径
-	DefaultFilename = "./euto-log.log"
-	// DefaultMaxSize 默认单日志文件大小
+	// Default File Name
+	DefaultFilename = "./app.log"
+	// Default Max File Size
 	DefaultMaxSize = 100
 )
 
@@ -24,6 +25,7 @@ var zapLevel = map[string]zapcore.Level{
 	"error": zapcore.ErrorLevel,
 }
 
+//Options stores all options , and the logger which want to use direct.
 type Options struct {
 	Logger     *zap.SugaredLogger
 	Filename   string
@@ -34,42 +36,42 @@ type Options struct {
 	Level      zapcore.Level
 }
 
-// Logger 设置日志对象
+//Logger set logger into zaplogger
 func Logger(logger *zap.SugaredLogger) Option {
 	return func(o *Options) {
 		o.Logger = logger
 	}
 }
 
-// Filename 日志文件名
+//Filename set filename instead of default filename
 func Filename(filename string) Option {
 	return func(o *Options) {
 		o.Filename = filename
 	}
 }
 
-// MaxSize 单日志文件大小上限
+// MaxSize set maxSize of log file.
 func MaxSize(maxSize int32) Option {
 	return func(o *Options) {
 		o.MaxSize = maxSize
 	}
 }
 
-// LocalTime 是否使用本地时间
+// LocalTime Use localtime?
 func LocalTime(localTime bool) Option {
 	return func(o *Options) {
 		o.LocalTime = localTime
 	}
 }
 
-// Compress 是否压缩日志文件
+// Compress Use Compress ?
 func Compress(compress bool) Option {
 	return func(o *Options) {
 		o.Compress = compress
 	}
 }
 
-// Level 日志级别
+// Level Set output log level
 func Level(l string) Option {
 	return func(o *Options) {
 		if level, ok := zapLevel[l]; ok {
@@ -80,14 +82,14 @@ func Level(l string) Option {
 	}
 }
 
-// FilterOutFunc 设置中间件忽略函数列表
+// FilterOutFunc set filter function.
 //func FilterOutFunc(filterOutFunc) Option {
 //	return func(o *Options) {
 //		o.FilterOutFunc = filterOutFunc
 //	}
 //}
 
-//最大备份数量
+//MaxBackups max backups number
 func MaxBackups(a int) Option {
 	return func(options *Options) {
 		options.MaxBackups = a

@@ -4,21 +4,22 @@ import (
 	"go.uber.org/zap"
 )
 
+//ZapLogger zap logs implement.
 type ZapLogger struct {
 	Options *Options
 	*zap.SugaredLogger
 }
 
-
+//Configure the log print.
 func configure(zap *ZapLogger, ops ...Option) {
-	// 默认值
+	// default value.
 	zap.Options.LocalTime = true
 	zap.Options.Compress = true
-	// 处理设置参数
+	// Deal with options which are set.
 	for _, o := range ops {
 		o(zap.Options)
 	}
-	// 参数为空时默认值
+	// When args is empty, use default.
 	if zap.Options.Filename == "" {
 		zap.Options.Filename = DefaultFilename
 	}

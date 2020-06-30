@@ -4,8 +4,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//定义好了兼容GRPC logger 的zap logger接口
-
+//GrpcLog GRPC logger zap implement.
 type GrpcLog struct {
 	SugaredLogger *zap.SugaredLogger
 }

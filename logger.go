@@ -11,17 +11,19 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+//Log object for logger use.
 var Log *ZapLogger
 
+//NewZapLogger Create a new ZapLogger and return.
 func NewZapLogger(opts ...Option) *ZapLogger {
 	zapLogger := &ZapLogger{
 		Options: new(Options),
 	}
-	// 配置
+
 	configure(zapLogger, opts...)
-	// 未设置日志对象，则创建一个
+	// if there is no logger , create one.
 	if zapLogger.Options.Logger == nil {
-		// 创建zap日志对象
+		// create zap logger.
 		syncWriter := zapcore.AddSync(&lumberjack.Logger{
 			Filename:   zapLogger.Options.Filename,
 			MaxSize:    int(zapLogger.Options.MaxSize),
@@ -30,13 +32,13 @@ func NewZapLogger(opts ...Option) *ZapLogger {
 			MaxBackups: zapLogger.Options.MaxBackups,
 		})
 		pEncoder := zap.NewDevelopmentEncoderConfig()
-		pEncoder.EncodeTime = zapcore.ISO8601TimeEncoder // 时间格式
+		pEncoder.EncodeTime = zapcore.ISO8601TimeEncoder // time fommat.
 		encoder := zap.NewProductionEncoderConfig()
-		encoder.EncodeLevel = zapcore.CapitalColorLevelEncoder //命令行颜色
+		encoder.EncodeLevel = zapcore.CapitalColorLevelEncoder //output console color.
 		encoder.EncodeTime = zapcore.ISO8601TimeEncoder
 		core := zapcore.NewTee(
-			zapcore.NewCore(zapcore.NewConsoleEncoder(pEncoder), syncWriter, zap.NewAtomicLevelAt(zapLogger.Options.Level)),                //生产环境核心 ， 输出日志至文件
-			zapcore.NewCore(zapcore.NewConsoleEncoder(encoder), zapcore.AddSync(os.Stdout), zap.NewAtomicLevelAt(zapLogger.Options.Level)), //开发环境核心，输出带颜色参数的日志至命令行
+			zapcore.NewCore(zapcore.NewConsoleEncoder(pEncoder), syncWriter, zap.NewAtomicLevelAt(zapLogger.Options.Level)),                //the core of production , insert log to file.
+			zapcore.NewCore(zapcore.NewConsoleEncoder(encoder), zapcore.AddSync(os.Stdout), zap.NewAtomicLevelAt(zapLogger.Options.Level)), //the core for both production and development, log to console.
 		)
 
 		logger := zap.New(core, zap.AddCaller())
@@ -51,7 +53,7 @@ func NewZapLogger(opts ...Option) *ZapLogger {
 	return zapLogger
 }
 
-//use ZapLogger to implement middleware
+//StreamClient Use ZapLogger to implement middleware
 func (zap *ZapLogger) StreamClient(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (cs grpc.ClientStream, err error) {
 	//todo: filter func
 	defer func() {
@@ -65,51 +67,62 @@ func (zap *ZapLogger) StreamClient(ctx context.Context, desc *grpc.StreamDesc, c
 	return
 }
 
-
-func Info(arg ...interface{}){
+//Info implement for zap log info method.
+func Info(arg ...interface{}) {
 	Log.Info(arg...)
 }
 
-func Infof(template string,arg ...interface{})  {
-	Log.Infof(template,arg...)
+//Infof implement for zap log infof method.
+func Infof(template string, arg ...interface{}) {
+	Log.Infof(template, arg...)
 }
 
-func Error(arg ...interface{}){
+//Error implement for zap log error method.
+func Error(arg ...interface{}) {
 	Log.Error(arg...)
 }
 
-func Errorf(template string,arg ...interface{}){
-	Log.Errorf(template ,arg...)
+//Errorf implement for zap log errorf method.
+func Errorf(template string, arg ...interface{}) {
+	Log.Errorf(template, arg...)
 }
 
-func Fatal(arg ...interface{}){
+//Fatal implement for zap log fatal method.
+func Fatal(arg ...interface{}) {
 	Log.Fatal(arg...)
 }
 
-func Fatalf(template string,arg ...interface{}){
-	Log.Fatalf(template ,arg...)
+//Fatalf implement for zap log fatalf method.
+func Fatalf(template string, arg ...interface{}) {
+	Log.Fatalf(template, arg...)
 }
 
-func Panic(arg ...interface{}){
+//Panic implement for zap log panic method.
+func Panic(arg ...interface{}) {
 	Log.Panic(arg...)
 }
 
-func Panicf(template string,arg ...interface{}){
-	Log.Panicf(template ,arg...)
+//Panicf implement for zap log panicf method.
+func Panicf(template string, arg ...interface{}) {
+	Log.Panicf(template, arg...)
 }
 
-func Warn(arg ...interface{}){
+//Warn implement for zap log warn method.
+func Warn(arg ...interface{}) {
 	Log.Warn(arg...)
 }
 
-func Warnf(template string,arg ...interface{}){
-	Log.Warnf(template ,arg...)
+//Warnf implement for zap log warnf method.
+func Warnf(template string, arg ...interface{}) {
+	Log.Warnf(template, arg...)
 }
 
-func Debug(arg ...interface{}){
+//Debug implement for zap log debug method.
+func Debug(arg ...interface{}) {
 	Log.Debug(arg...)
 }
 
-func Debugf(template string,arg ...interface{}){
-	Log.Debugf(template,arg...)
+//Debugf implement for zap log debugf method.
+func Debugf(template string, arg ...interface{}) {
+	Log.Debugf(template, arg...)
 }
